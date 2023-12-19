@@ -20,11 +20,7 @@ keycloak
     } else {
       console.log("Authenticated");
     }
-
     createApp(App).mount("#app");
-
-    localStorage.setItem("vue-token", keycloak.token);
-    localStorage.setItem("vue-refresh-token", keycloak.refreshToken);
 
     setInterval(() => {
       keycloak
@@ -53,5 +49,6 @@ keycloak
     console.log(error);
     console.error("Authenticated Failed");
   });
+
 
 export default keycloak;

@@ -1,8 +1,8 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using Secured.API;
+using Secured.API.Persistence;
+using Secured.API.Persistence.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,25 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
-    {
-        o.MetadataAddress = "http://localhost:8080/realms/dotnet-vue/.well-known/openid-configuration";
-        o.RequireHttpsMetadata = false;
-        o.Authority = "http://localhost:8080/realms/dotnet-vue";
-        o.Audience = "account";
-    });
-
-builder.Services.AddCors(options =>
+builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 {
-    options.AddDefaultPolicy(
-        policy => policy.WithOrigins("http://localhost:5137")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin()
-    );
+    options.UseInMemoryDatabase("libraryDatabase");
 });
 
+builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+builder.Services.AddWebServices(builder.Configuration);
 
 var app = builder.Build();
 

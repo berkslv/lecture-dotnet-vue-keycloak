@@ -1,7 +1,8 @@
 import axios from "axios";
+import keycloak from "../main";
 
 const http = axios.create({
-  baseURL: "http://localhost:5050/",
+  baseURL: "http://localhost:5050/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -9,9 +10,8 @@ const http = axios.create({
 
 http.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem("vue-token");
     config.headers = {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${keycloak.token}`,
       Accept: "application/json",
     };
     return config;
