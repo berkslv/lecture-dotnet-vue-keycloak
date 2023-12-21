@@ -8,8 +8,8 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddWebServices(this IServiceCollection services, IConfiguration configuration)
     {
-        RegisterWithEndpoint(services);
-        // RegisterWithKey(services, configuration);
+        // RegisterWithEndpoint(services);
+        RegisterWithKey(services, configuration);
 
         return services;
     }
@@ -40,6 +40,7 @@ public static class ConfigureServices
     {
         var issuer = configuration["Jwt:Issuer"];
         var key = configuration["Jwt:Key"];
+        Console.WriteLine("From appsettings.json {0}, {1}", issuer, key);
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,7 +49,7 @@ public static class ConfigureServices
             .AddJwtBearer(o =>
             {
                 o.Authority = issuer;
-                o.RequireHttpsMetadata = true;
+                o.RequireHttpsMetadata = false;
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
